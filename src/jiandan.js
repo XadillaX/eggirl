@@ -14,7 +14,7 @@ export default class Jiandan extends Component {
     render() {
         return (
             <Router>
-                <Scene key="xxoo-list" title="🍳 美女图" component={OOXXList} />
+                <Scene key="xxoo-list" title="🍳 妹纸" component={OOXXList} />
             </Router>
         );
     }
