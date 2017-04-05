@@ -71,6 +71,8 @@ spidex.method = function(method, url, opts, callback) {
         if(timeoutHandler) clearTimeout(timeoutHandler);
         allFinished = true;
 
+        console.log(resp);
+
         status = resp.status;
         respHeaders = resp.headers;
         return resp.text();

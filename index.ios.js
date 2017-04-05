@@ -14,4 +14,4 @@ export default class App extends Component {
     }
 }
 
-AppRegistry.registerComponent("jiandan", () => App);
+AppRegistry.registerComponent("Eggirl", () => App);
