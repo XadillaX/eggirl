@@ -32,6 +32,8 @@ export default class OOXXList extends Component {
     @observable
     networkError = false;
 
+    respCookie = "";
+
     @action
     updateList(list) {
         if(this.list.length && this.list[this.list.length - 1].fetchingNext) {
@@ -55,10 +57,15 @@ export default class OOXXList extends Component {
         }
     }
 
-    onIndexFetched(html, status) {
+    onIndexFetched(html, status, header) {
         if(status !== 200) {
-            return console.log("错误。");
+            this.networkError = new Error("server returned a wrong status code");
+            return console.log("错误的状态码。", status);
         }
+
+        console.log(header);
+        const cookie = spidex.parseCookie(header);
+        if(cookie) this.respCookie += (this.respCookie ? " " : "") + cookie;
 
         const $ = cheerio.load(html);
         const list = [];
@@ -70,6 +77,7 @@ export default class OOXXList extends Component {
             const ago = $(ele).find("div.author small").text();
 
             list.push({
+                idx: list.length,
                 key: id,
                 author: author,
                 img: `https:${img}`,
@@ -97,6 +105,10 @@ export default class OOXXList extends Component {
         });
     }
 
+    get cookies() {
+        return this.respCookie;
+    }
+
     fetchIndex() {
         let url = "/ooxx";
         this.lastPage--;
@@ -105,29 +117,32 @@ export default class OOXXList extends Component {
         }
 
         const self = this;
+        const header = {
+            // ":authority": "jiandan.net",
+            // ":method": "GET",
+            // ":path": url,
+            // ":scheme": "http",
+
+            accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "accept-language": "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,sv;q=0.2,zh-TW;q=0.2",
+            "cache-control": "no-cache",
+
+            pragma: "no-cache",
+            "upgrade-insecure-requests": 1,
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) " +
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
+        };
+        const cookies = this.cookies;
+        if(cookies) header.cookie = cookies;
+
         spidex.get(`https://jandan.net${url}`, {
-            header: {
-                // ":authority": "jiandan.net",
-                // ":method": "GET",
-                // ":path": url,
-                // ":scheme": "http",
-
-                accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                "accept-language": "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,sv;q=0.2,zh-TW;q=0.2",
-                "cache-control": "no-cache",
-
-                pragma: "no-cache",
-                "upgrade-insecure-requests": 1,
-                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) " +
-                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
-            }
+            header: header
         }, this.onIndexFetched.bind(this)).on("error", function(err) {
             if(self.list.length && self.list[self.list.length - 1].fetchingNext === true) {
                 self.list.pop();
             }
 
             self.networkError = err;
-
             console.log(err);
         });
     }

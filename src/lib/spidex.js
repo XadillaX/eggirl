@@ -71,10 +71,8 @@ spidex.method = function(method, url, opts, callback) {
         if(timeoutHandler) clearTimeout(timeoutHandler);
         allFinished = true;
 
-        console.log(resp);
-
         status = resp.status;
-        respHeaders = resp.headers;
+        respHeaders = resp.headers ? resp.headers.map || {} : {};
         return resp.text();
     }).then(function(text) {
         return callback(text, status, respHeaders);
@@ -93,3 +91,20 @@ spidex.get = function(url, opts, callback) {
 };
 
 export default spidex;
+
+spidex.parseCookie = function(respHeader) {
+    const cookies = respHeader["set-cookie"];
+    if(!cookies || !Array.isArray(cookies) || cookies.length === 0) return "";
+
+    let cookie = "";
+    for(let tmpCookie of cookies) {
+        if(tmpCookie.indexOf(";") !== -1) {
+            tmpCookie = tmpCookie.substr(0, tmpCookie.indexOf(";") + 1);
+        }
+
+        cookie += tmpCookie;
+        cookie += " ";
+    }
+
+    return cookie;
+};
