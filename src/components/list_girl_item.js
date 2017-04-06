@@ -7,8 +7,8 @@
 
 import React, { Component } from "react";
 import { observer } from "mobx-react/native";
-import { observable, computed } from "mobx";
-import { Image, View, Text } from "react-native";
+import { observable, action } from "mobx";
+import { TouchableOpacity, Image, View, Text } from "react-native";
 
 const STYLES = {
     rowView: {
@@ -32,15 +32,18 @@ export default class ListGirlItem extends Component {
     @observable
     static imageWidth = 0;
 
-    @computed
-    get imageHeight() {
-        return ListGirlItem.imageWidth * (this.props.item.imageSize.width / this.props.item.imageSize.height);
+    @observable
+    errored = [];
+
+    constructor(props) {
+        super(props);
+
+        for(let i = 0; i < this.props.item.images.length; i++) {
+            this.errored.push(false);
+        }
     }
 
-    constructor() {
-        super();
-    }
-
+    @action
     onViewLayout(event) {
         if(ListGirlItem.imageWidth === 0) {
             ListGirlItem.imageWidth = event.nativeEvent.layout.width;
@@ -49,20 +52,49 @@ export default class ListGirlItem extends Component {
 
     render() {
         const item = this.props.item;
+        const images = item.images.map((img, idx) => // eslint-disable-line
+            this.errored[idx] ?
+            <TouchableOpacity onPress={() => { this.errored[idx] = false; }}>
+                    <View
+                        key={img.thumbnail}
+                        style={{
+                            width: ListGirlItem.imageWidth,
+                            height: ListGirlItem.imageWidth / img.ratio,
+                            backgroundColor: "#ccc",
+                            marginBottom: idx === item.images.length - 1 ? 0 : 10,
+                            justifyContent: "center"
+                        }}>
+                        <Text style={{ fontSize: 16, textAlign: "center", color: "#999" }}>Failed to display</Text>
+                        <Text style={{ textAlign: "center", color: "#999" }}>Tap to reload</Text>
+                    </View>
+                </TouchableOpacity> :
+                <Image
+                    key={img.thumbnail}
+                    style={{
+                        width: ListGirlItem.imageWidth,
+                        height: ListGirlItem.imageWidth / img.ratio,
+                        backgroundColor: "#ccc",
+                        marginBottom: idx === item.images.length - 1 ? 0 : 10
+                    }}
+                    source={{ uri: img.gif || img.thumbnail }}
+                    onError={err => {
+                        console.log(`failed to display image ${img.thumbnail}`, err);
+                        this.errored[idx] = true;
+                    }} />
+        );
+
+        const left = this.props.showLeft ?
+            <View style={STYLES.rowLeftView}>
+                <Text style={{ color: "red", fontSize: 14 }}>{item.author}</Text>
+                <Text style={{ color: "#ccc", fontSize: 12 }}>{item.ago}</Text>
+            </View> :
+            <View style={STYLES.rowLeftView} />;
+
         return (
             <View key={item.key} style={STYLES.rowView}>
-                <View style={STYLES.rowLeftView}>
-                    <Text style={{ color: "red", fontSize: 14 }}>{item.author}</Text>
-                    <Text style={{ color: "#ccc", fontSize: 12 }}>{item.ago}</Text>
-                </View>
+                {left}
                 <View style={STYLES.rowRightView} onLayout={event => this.onViewLayout(event)}>
-                    <Image
-                        style={{
-                            width: this.imageWidth,
-                            height: this.imageHeight,
-                            backgroundColor: "#ccc"
-                        }}
-                        source={{ uri: item.img }} />
+                    {images}
                 </View>
             </View>
         );
