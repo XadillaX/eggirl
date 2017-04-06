@@ -5,4 +5,70 @@
  */
 "use strict";
 
+import { computed, observable, action } from "mobx";
 
+class GirlListStore {
+    @observable
+    list = [];
+
+    buffList = [];
+
+    loadedHash = {};
+
+    constructor() {
+    }
+
+    push(item) {
+        this.list.push(item);
+    }
+
+    pushToBuffList(item) {
+        if(this.loadedHash[item.key]) {
+            return;
+        }
+
+        this.loadedHash[item.key] = true;
+        this.buffList.push(item);
+    }
+
+    get count() {
+        return this.list.length;
+    }
+
+    get buffCount() {
+        return this.buffList.length;
+    }
+
+    @computed
+    get raw() {
+        return this.list.slice();
+    }
+
+    get last() {
+        if(!this.list.length) return null;
+        return this.list[this.list.length - 1];
+    }
+
+    pop() {
+        return this.list.pop();
+    }
+
+    @action
+    syncBuffToList() {
+        for(const item of this.buffList) {
+            this.list.push(item);
+        }
+
+        this.buffList = [];
+    }
+
+    at(idx) {
+        return this.list[idx];
+    }
+
+    clear() {
+        this.list.clear();
+    }
+}
+
+module.exports = new GirlListStore();

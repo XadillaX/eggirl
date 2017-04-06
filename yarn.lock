@@ -2,6 +2,15 @@
 # yarn lockfile v1
 
 
+"@ldn0x7dc/react-native-view-pager@0.0.9":
+  version "0.0.9"
+  resolved "http://registry.npm.taobao.org/@ldn0x7dc/react-native-view-pager/download/@ldn0x7dc/react-native-view-pager-0.0.9.tgz#0ca8d88c9b6da77b581222617e0b04459bcbd3b0"
+  dependencies:
+    react-mixin "^3.0.5"
+    react-native-gesture-responder "0.1.1"
+    react-native-scroller "0.0.6"
+    react-timer-mixin "^0.13.3"
+
 abab@^1.0.0, abab@^1.0.3:
   version "1.0.3"
   resolved "http://registry.npm.taobao.org/abab/download/abab-1.0.3.tgz#b81de5f7274ec4e756d797cd834f303642724e5d"
@@ -3627,6 +3636,13 @@ react-devtools-core@^2.0.8:
     cross-env "^3.1.4"
     ws "^2.0.3"
 
+react-mixin@^3.0.5:
+  version "3.0.5"
+  resolved "http://registry.npm.taobao.org/react-mixin/download/react-mixin-3.0.5.tgz#e0b7b6713fdc9ddc429267df808b6ac5184c6706"
+  dependencies:
+    object-assign "^4.0.1"
+    smart-mixin "^2.0.0"
+
 react-native-experimental-navigation@0.26.x:
   version "0.26.10"
   resolved "http://registry.npm.taobao.org/react-native-experimental-navigation/download/react-native-experimental-navigation-0.26.10.tgz#355e37929a2bfb84088dca331f34bc575297df68"
@@ -3642,6 +3658,20 @@ react-native-fit-image@^1.4.7:
   version "1.4.7"
   resolved "http://registry.npm.taobao.org/react-native-fit-image/download/react-native-fit-image-1.4.7.tgz#4d9cdadeb850fe582981f8f2448e10e122b29d8b"
 
+react-native-gallery@^0.0.17:
+  version "0.0.17"
+  resolved "http://registry.npm.taobao.org/react-native-gallery/download/react-native-gallery-0.0.17.tgz#4fb137746264a96ebe2c1a58cafd2eec88ea9693"
+  dependencies:
+    "@ldn0x7dc/react-native-view-pager" "0.0.9"
+    react-native-gesture-responder "0.1.1"
+    react-native-transformable-image "0.0.18"
+
+react-native-gesture-responder@0.1.1:
+  version "0.1.1"
+  resolved "http://registry.npm.taobao.org/react-native-gesture-responder/download/react-native-gesture-responder-0.1.1.tgz#802552d8eb7153c0d81a396e98f4b80b404b6798"
+  dependencies:
+    react-timer-mixin "^0.13.3"
+
 react-native-loading-spinner-overlay@^0.4.2:
   version "0.4.2"
   resolved "http://registry.npm.taobao.org/react-native-loading-spinner-overlay/download/react-native-loading-spinner-overlay-0.4.2.tgz#a906d781a0fcecf793491d800d2f5b3eeadf7c3b"
@@ -3654,9 +3684,19 @@ react-native-router-flux@^3.38.0:
     react-native-tabs "^1.0.9"
     react-static-container "1.0.1"
 
+react-native-scroller@0.0.6:
+  version "0.0.6"
+  resolved "http://registry.npm.taobao.org/react-native-scroller/download/react-native-scroller-0.0.6.tgz#dea8c89bd1ca2d2445fbb6b3a90960df6c1767ff"
+
 react-native-tabs@^1.0.9:
   version "1.0.9"
   resolved "http://registry.npm.taobao.org/react-native-tabs/download/react-native-tabs-1.0.9.tgz#75d3c35e8b5b6970869eab282372cb32e2a782cd"
+
+react-native-transformable-image@0.0.18:
+  version "0.0.18"
+  resolved "http://registry.npm.taobao.org/react-native-transformable-image/download/react-native-transformable-image-0.0.18.tgz#00229f2410c443a3a6b5fa53714121ecd882396f"
+  dependencies:
+    react-native-view-transformer "0.0.28"
 
 react-native-vector-icons@^4.0.0:
   version "4.0.1"
@@ -3664,6 +3704,13 @@ react-native-vector-icons@^4.0.0:
   dependencies:
     lodash "^4.0.0"
     yargs "^6.3.0"
+
+react-native-view-transformer@0.0.28:
+  version "0.0.28"
+  resolved "http://registry.npm.taobao.org/react-native-view-transformer/download/react-native-view-transformer-0.0.28.tgz#01bb8c9e6cfff70a8d400e061c0cd27602662acb"
+  dependencies:
+    react-native-gesture-responder "0.1.1"
+    react-native-scroller "0.0.6"
 
 react-native@0.43.0, react-native@>=0.40.0:
   version "0.43.0"
@@ -3777,7 +3824,7 @@ react-theme@^0.1.4:
   dependencies:
     lodash "^3.9.3"
 
-react-timer-mixin@^0.13.2:
+react-timer-mixin@^0.13.2, react-timer-mixin@^0.13.3:
   version "0.13.3"
   resolved "http://registry.npm.taobao.org/react-timer-mixin/download/react-timer-mixin-0.13.3.tgz#0da8b9f807ec07dc3e854d082c737c65605b3d22"
 
@@ -4168,6 +4215,10 @@ slice-ansi@0.0.4:
 slide@^1.1.5:
   version "1.1.6"
   resolved "http://registry.npm.taobao.org/slide/download/slide-1.1.6.tgz#56eb027d65b4d2dce6cb2e2d32c4d4afc9e1d707"
+
+smart-mixin@^2.0.0:
+  version "2.0.0"
+  resolved "http://registry.npm.taobao.org/smart-mixin/download/smart-mixin-2.0.0.tgz#a34a1055e32a75b30d2b4e3ca323dc99cb53f437"
 
 sntp@1.x.x:
   version "1.0.9"

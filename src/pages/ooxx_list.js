@@ -26,9 +26,6 @@ export default class OOXXList extends Component {
     inited = false;
 
     @observable
-    list = [];
-
-    @observable
     lastPage = -1;
 
     @observable
@@ -41,14 +38,22 @@ export default class OOXXList extends Component {
     @observable
     refreshing = false;
 
-    buffList = [];
-
     loadedHash = {};
+
+    girlListStore = require("../store/girl_list");
+
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidMount() {
+        this.fetchIndex();
+    }
 
     @action
     updateList(list) {
-        if(this.list.length && this.list[this.list.length - 1].fetchingNext) {
-            this.list.pop();
+        if(this.girlListStore.count && this.girlListStore.last.fetchingNext) {
+            this.girlListStore.pop();
             if(this.loadingMoreDotTimer) {
                 clearInterval(this.loadingMoreDotTimer);
                 this.loadingMoreDotTimer = null;
@@ -56,26 +61,19 @@ export default class OOXXList extends Component {
         }
 
         for(const item of list) {
-            // 去重
-            if(!this.loadedHash[item.key]) {
-                this.loadedHash[item.key] = true;
-                this.buffList.push(item);
-            }
+            this.girlListStore.pushToBuffList(item);
         }
 
         // 有时候会不够 10 个
-        if(this.buffList.length < 10) {
+        if(this.girlListStore.buffCount < 10) {
             this.fetchIndex();
         } else {
             if(this.refreshing) {
-                this.list.clear();
+                this.girlListStore.clear();
             }
 
-            for(const item of this.buffList) {
-                this.list.push(item);
-            }
+            this.girlListStore.syncBuffToList();
 
-            this.buffList = [];
             this.refreshing = false;
             this.inited = true;
         }
@@ -162,8 +160,8 @@ export default class OOXXList extends Component {
         if(this.lastPage > 0) {
             url += `/page-${this.lastPage}`;
         } else if(this.lastPage === 0) {
-            this.list[this.list.length - 1].fetchingNext = false;
-            this.list[this.list.length - 1].noMore = true;
+            this.grilListStore.last.fetchingNext = false;
+            this.girlListStore.last.noMore = true;
             return;
         }
 
@@ -189,21 +187,13 @@ export default class OOXXList extends Component {
         spidex.get(`https://jandan.net${url}`, {
             header: header
         }, this.onIndexFetched.bind(this)).on("error", function(err) {
-            if(self.list.length && self.list[self.list.length - 1].fetchingNext === true) {
-                self.list.pop();
+            if(self.girlListStore.count && self.girlListStore.last.fetchingNext === true) {
+                self.girlListStore.pop();
             }
 
             self.networkError = err;
             console.log(err);
         });
-    }
-
-    constructor(props) {
-        super(props);
-    }
-
-    componentDidMount() {
-        this.fetchIndex();
     }
 
     renderRow(item) {
@@ -243,7 +233,7 @@ export default class OOXXList extends Component {
         // 如果作者和时间都与上方相同则不显示左边栏
         const showLeft = idx === 0 ?
             true :
-            !(this.list[idx - 1].author === obj.author && this.list[idx - 1].ago === obj.ago);
+            !(this.girlListStore.at(idx - 1).author === obj.author && this.girlListStore.at(idx - 1).ago === obj.ago);
 
         return (
             <ListGirlItem item={obj} showLeft={showLeft} />
@@ -260,7 +250,7 @@ export default class OOXXList extends Component {
         if(this.lastPage === 0) return;
 
         this.networkError = false;
-        if(this.list.length && this.list[this.list.length - 1].fetchingNext === true) return;
+        if(this.girlListStore.count && this.girlListStore.last.fetchingNext === true) return;
 
         if(!this.loadingMoreDotTimer) {
             const self = this;
@@ -271,7 +261,7 @@ export default class OOXXList extends Component {
             }, 500);
         }
 
-        this.list.push({ fetchingNext: true, key: "fetching" });
+        this.girlListStore.push({ fetchingNext: true, key: "fetching" });
         this.fetchIndex();
     }
 
@@ -298,7 +288,7 @@ export default class OOXXList extends Component {
             return (
                 <View style={{ marginTop: 64 }}>
                     <AnimatedFlatList
-                        data={this.list.slice()}
+                        data={this.girlListStore.raw}
                         renderItem={this.renderRow.bind(this)}
                         onEndReached={this.fetchNextPage.bind(this)}
                         onRefresh={() => {
