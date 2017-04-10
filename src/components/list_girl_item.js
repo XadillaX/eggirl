@@ -8,7 +8,10 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react/native";
 import { observable, action } from "mobx";
-import { TouchableOpacity, Image, View, Text } from "react-native";
+import { Platform, TouchableOpacity, Image, View, Text } from "react-native";
+import { Actions } from "react-native-router-flux";
+
+import girlListStore from "../store/girl_list";
 
 const STYLES = {
     rowView: {
@@ -50,13 +53,38 @@ export default class ListGirlItem extends Component {
         }
     }
 
+    openGallery(idx) {
+        const imgList = [];
+        let trueIdx = 0;
+        const raw = girlListStore.raw;
+
+        let currentIndex = 0;
+        for(let i = 0; i < raw.length; i++) {
+            const item = raw[i];
+            if(item.fetchingNext || item.noMore) continue;
+            for(let j = 0; j < item.images.length; j++) {
+                if(this.props.item.idx === i && idx === j) {
+                    trueIdx = currentIndex;
+                }
+
+                currentIndex++;
+                imgList.push({
+                    photo: item.images[j].large,
+                    caption: item.author,
+                    thumb: item.images[j].thumbnail
+                });
+            }
+        }
+
+        Actions["ooxx-gallery"]({ hide: false, images: imgList, initialSelectedIndex: trueIdx });
+    }
+
     render() {
         const item = this.props.item;
         const images = item.images.map((img, idx) => // eslint-disable-line
             this.errored[idx] ?
-            <TouchableOpacity onPress={() => { this.errored[idx] = false; }}>
+                <TouchableOpacity onPress={() => { this.errored[idx] = false; }} key={`${img.thumbnail}:fail`}>
                     <View
-                        key={img.thumbnail}
                         style={{
                             width: ListGirlItem.imageWidth,
                             height: ListGirlItem.imageWidth / img.ratio,
@@ -68,25 +96,28 @@ export default class ListGirlItem extends Component {
                         <Text style={{ textAlign: "center", color: "#999" }}>Tap to reload</Text>
                     </View>
                 </TouchableOpacity> :
-                <Image
-                    key={img.thumbnail}
-                    style={{
-                        width: ListGirlItem.imageWidth,
-                        height: ListGirlItem.imageWidth / img.ratio,
-                        backgroundColor: "#ccc",
-                        marginBottom: idx === item.images.length - 1 ? 0 : 10
-                    }}
-                    source={{ uri: img.gif || img.thumbnail }}
-                    onError={err => {
-                        console.log(`failed to display image ${img.thumbnail}`, err);
-                        this.errored[idx] = true;
-                    }} />
+                <TouchableOpacity onPress={this.openGallery.bind(this, idx)} key={img.thumbnail}>
+                    <Image
+                        style={{
+                            width: ListGirlItem.imageWidth,
+                            height: ListGirlItem.imageWidth / img.ratio,
+                            backgroundColor: "#ccc",
+                            marginBottom: idx === item.images.length - 1 ? 0 : 10
+                        }}
+                        source={{ uri: img.gif || img.thumbnail }}
+                        onError={err => {
+                            console.log(`failed to display image ${img.thumbnail}`, err);
+                            this.errored[idx] = true;
+                        }} />
+                </TouchableOpacity>
         );
 
+        // refer to https://github.com/facebook/react-native/issues/3233
+        // Android TextView doesn't support letter spacing and padding
         const left = this.props.showLeft ?
             <View style={STYLES.rowLeftView}>
-                <Text style={{ color: "red", fontSize: 14 }}>{item.author}</Text>
-                <Text style={{ color: "#ccc", fontSize: 12 }}>{item.ago}</Text>
+                <Text style={{ color: "red", fontSize: 14 }}>{Platform.OS === "ios" ? "" : "    "}{item.author}</Text>
+                <Text style={{ color: "#ccc", fontSize: 12 }}>{Platform.OS === "ios" ? "" : "    "}{item.ago}</Text>
             </View> :
             <View style={STYLES.rowLeftView} />;
 

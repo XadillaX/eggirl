@@ -19,6 +19,7 @@ class GirlListStore {
     }
 
     push(item) {
+        item.idx = this.list.length;
         this.list.push(item);
     }
 
@@ -50,13 +51,15 @@ class GirlListStore {
     }
 
     pop() {
+        const last = this.last;
+        if(last.key) this.loadedHash[last.key] = undefined;
         return this.list.pop();
     }
 
     @action
     syncBuffToList() {
         for(const item of this.buffList) {
-            this.list.push(item);
+            this.push(item);
         }
 
         this.buffList = [];
@@ -67,6 +70,7 @@ class GirlListStore {
     }
 
     clear() {
+        this.loadedHash = {};
         this.list.clear();
     }
 }

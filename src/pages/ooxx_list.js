@@ -9,7 +9,7 @@ import async from "async";
 import React, { Component } from "react";
 import { observable, action } from "mobx";
 import { observer } from "mobx-react/native";
-import { TouchableOpacity, Image, FlatList, View, Text, Animated } from "react-native";
+import { Platform, TouchableOpacity, Image, FlatList, View, Text, Animated } from "react-native";
 
 import cheerio from "cheerio-without-node-native";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -58,6 +58,10 @@ export default class OOXXList extends Component {
                 clearInterval(this.loadingMoreDotTimer);
                 this.loadingMoreDotTimer = null;
             }
+        }
+
+        if(this.refreshing) {
+            this.girlListStore.loadedHash = {};
         }
 
         for(const item of list) {
@@ -110,7 +114,6 @@ export default class OOXXList extends Component {
             });
 
             list.push({
-                idx: list.length,
                 key: id,
                 author: author,
                 ago: ago,
@@ -157,6 +160,7 @@ export default class OOXXList extends Component {
     fetchIndex() {
         let url = "/ooxx";
         this.lastPage--;
+        console.log(this.lastPage);
         if(this.lastPage > 0) {
             url += `/page-${this.lastPage}`;
         } else if(this.lastPage === 0) {
@@ -184,7 +188,7 @@ export default class OOXXList extends Component {
         const cookies = this.cookies;
         if(cookies) header.cookie = cookies;
 
-        spidex.get(`https://jandan.net${url}`, {
+        spidex.get(`http://jandan.net${url}`, {
             header: header
         }, this.onIndexFetched.bind(this)).on("error", function(err) {
             if(self.girlListStore.count && self.girlListStore.last.fetchingNext === true) {
@@ -250,7 +254,7 @@ export default class OOXXList extends Component {
         if(this.lastPage === 0) return;
 
         this.networkError = false;
-        if(this.girlListStore.count && this.girlListStore.last.fetchingNext === true) return;
+        if(this.girlListStore.count && this.girlListStore.last.fetchingNext === true && !this.refreshing) return;
 
         if(!this.loadingMoreDotTimer) {
             const self = this;
@@ -286,7 +290,11 @@ export default class OOXXList extends Component {
             // for refreshing forcely
             this.loadingMoreDotCount; // eslint-disable-line
             return (
-                <View style={{ marginTop: 64 }}>
+                <View style={{
+                    marginTop: Platform.OS === "ios" ? 64 : 54,
+                    flex: 1,
+                    backgroundColor: "#f5fcff"
+                }}>
                     <AnimatedFlatList
                         data={this.girlListStore.raw}
                         renderItem={this.renderRow.bind(this)}
@@ -298,7 +306,7 @@ export default class OOXXList extends Component {
                         }}
                         refreshing={this.refreshing}
                         onEndReachedThreshold={1}
-                        style={{ paddingLeft: 10, paddingRight: 10, backgroundColor: "#f5fcff" }} />
+                        style={{ paddingLeft: 10, paddingRight: 10, flex: 1 }} />
                 </View>
             );
         }
