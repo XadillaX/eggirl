@@ -35,12 +35,77 @@ export default class OOXXGallery extends Component {
     @observable
     saveFetching = false;
 
+    onActionButton(media) {
+        const self = this;
+        this.saveFetching = true;
+        let mime = "image/jpeg";
+        RNFetchBlob.config({ fileCache: true }).fetch("GET", media.photo).then(function(resp) {
+            const headers = otrans.toCamel(resp.respInfo.headers);
+            if(headers.contentType) {
+                mime = headers.contentType;
+            }
+            return resp.base64();
+        }).then(function(base64) {
+            self.saveFetching = false;
+
+            setTimeout(function() {
+                Share.open({
+                    url: `data:${mime};base64,${base64}`,
+                    message: `Eggirl - ${media.caption}`,
+                    type: "image/jpeg"
+                }).catch(err => err && console.log(err));
+            }, 0);
+        }).catch(err => {
+            console.log(err);
+            self.saveFetching = false;
+        });
+    }
+
+    onLongPress(media) {
+        if(Platform.OS === "ios") return;
+
+        const self = this;
+
+        // if android, long press to save
+        Alert.alert("You're going to save this image.", null, [
+            { text: "Save", onPress: function() {
+                let filename = "temp";
+                let type = "jpeg";
+                self.saveFetching = true;
+                RNFetchBlob.config({
+                    fileCache: true
+                }).fetch("GET", media.photo).then(function(resp) {
+                    filename = resp.taskId;
+
+                    const headers = otrans.toCamel(resp.respInfo.headers);
+                    if(headers.contentType) {
+                        type = headers.contentType.split("/")[1];
+                    }
+
+                    return resp.base64();
+                }).then(function(base64) {
+                    if(type === "jpeg") {
+                        type = "jpg";
+                    }
+
+                    const imageLocation = `${RNFetchBlob.fs.dirs.PictureDir}/${filename}.${type}`;
+                    RNFetchBlob.fs.writeFile(imageLocation, base64, "base64").then(function() {
+                        self.saveFetching = false;
+                        self.refs.toast.show("Saved.", DURATION.LENGTH_SHORT);
+                    }).catch(err => {
+                        self.saveFetching = false;
+                        Alert.alert("Error", err.message);
+                    });
+                }).catch(err => console.log(err));
+            } },
+            { text: "Cancel", onPress: function() {} }
+        ]);
+    }
+
     render() {
         if(this.hide) {
             return <View style={{ position: "absolute", top: -5, left: -5, height: 0, width: 0 }} />;
         } else {
-            const self = this;
-
             const spinner = this.saveFetching ? <Spinner visible={true} textContent="Preparing..."/> : null;
             return (
                 <View
@@ -62,69 +127,9 @@ export default class OOXXGallery extends Component {
                         initialIndex={this.props.initialSelectedIndex}
                         displayActionButton={true}
                         onBack={() => { this.hide = true; Actions.pop(); }}
-                        onActionButton={media => {
-                            this.saveFetching = true;
-                            let mime = "image/jpeg";
-                            RNFetchBlob.config({
-                                fileCache: true
-                            }).fetch("GET", media.photo).then(function(resp) {
-                                const headers = otrans.toCamel(resp.respInfo.headers);
-
-                                if(headers.contentType) {
-                                    mime = headers.contentType;
-                                }
-
-                                return resp.base64();
-                            }).then(function(base64) {
-                                self.saveFetching = false;
-                                Share.open({
-                                    url: `data:${mime};base64,${base64}`,
-                                    message: `Eggirl - ${media.caption}`,
-                                    type: "image/jpeg"
-                                }).catch(err => err && console.log(err));
-                            }).catch(err => console.log(err));
-                        }}
+                        onActionButton={media => this.onActionButton(media)}
                         delayPhotoLongPress={1000}
-                        onPhotoLongPress={media => {
-                            console.log(Platform.OS);
-                            if(Platform.OS === "ios") return;
-
-                            // if android
-                            Alert.alert("You're going to save this image.", null, [
-                                { text: "Save", onPress: function() {
-                                    let filename = "temp";
-                                    let type = "jpeg";
-                                    self.saveFetching = true;
-                                    RNFetchBlob.config({
-                                        fileCache: true
-                                    }).fetch("GET", media.photo).then(function(resp) {
-                                        filename = resp.taskId;
-
-                                        const headers = otrans.toCamel(resp.respInfo.headers);
-                                        if(headers.contentType) {
-                                            type = headers.contentType.split("/")[1];
-                                        }
-
-                                        return resp.base64();
-                                    }).then(function(base64) {
-                                        if(type === "jpeg") {
-                                            type = "jpg";
-                                        }
-
-                                        const imageLocation = `${RNFetchBlob.fs.dirs.PictureDir}/${filename}.${type}`;
-                                        RNFetchBlob.fs.writeFile(imageLocation, base64, "base64").then(function() {
-                                            self.saveFetching = false;
-                                            self.refs.toast.show("Saved.", DURATION.LENGTH_SHORT);
-                                        }).catch(err => {
-                                            self.saveFetching = false;
-                                            Alert.alert("Error", err.message);
-                                        });
-                                    }).catch(err => console.log(err));
-                                } },
-                                { text: "Cancel", onPress: function() {} }
-                            ]);
-                        }} />
-
+                        onPhotoLongPress={media => this.onLongPress(media)} />
                     <Toast ref="toast" />
                 </View>
             );
