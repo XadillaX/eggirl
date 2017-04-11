@@ -84,6 +84,7 @@ export default class OOXXGallery extends Component {
                                 }).catch(err => err && console.log(err));
                             }).catch(err => console.log(err));
                         }}
+                        delayPhotoLongPress={1000}
                         onPhotoLongPress={media => {
                             console.log(Platform.OS);
                             if(Platform.OS === "ios") return;
