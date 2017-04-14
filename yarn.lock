@@ -3720,9 +3720,9 @@ react-native-loading-spinner-overlay@^0.4.2:
   version "0.4.2"
   resolved "http://registry.npm.taobao.org/react-native-loading-spinner-overlay/download/react-native-loading-spinner-overlay-0.4.2.tgz#a906d781a0fcecf793491d800d2f5b3eeadf7c3b"
 
-"react-native-photo-browser@git+https://github.com/XadillaX/react-native-photo-browser#a3d8aa2":
+"react-native-photo-browser@git+https://github.com/XadillaX/react-native-photo-browser#6726a6e6286d557fb45b9e6bda750b28f09cd5df":
   version "0.2.2"
-  resolved "git+https://github.com/XadillaX/react-native-photo-browser#a3d8aa2"
+  resolved "git+https://github.com/XadillaX/react-native-photo-browser#6726a6e6286d557fb45b9e6bda750b28f09cd5df"
   dependencies:
     react-native-progress "^3.0.0"
 
