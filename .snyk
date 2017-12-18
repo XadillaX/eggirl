@@ -1,0 +1,54 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.10.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:debug:20170905':
+    - nachos-ui > react-native > metro > connect > debug:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > express-session > debug:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > finalhandler > debug:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > morgan > debug:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > body-parser > debug:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > compression > debug:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > serve-index > debug:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > serve-static > send > debug:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > connect-timeout > debug:
+        patched: '2017-12-18T23:48:41.690Z'
+  'npm:ms:20170412':
+    - nachos-ui > react-native > metro > connect > debug > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > connect-timeout > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > connect-timeout > debug > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > express-session > debug > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > finalhandler > debug > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > morgan > debug > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > body-parser > debug > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > compression > debug > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > serve-index > debug > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > serve-static > send > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > serve-static > send > debug > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > serve-favicon > ms:
+        patched: '2017-12-18T23:48:41.690Z'
+  'npm:negotiator:20160616':
+    - nachos-ui > react-native > metro > connect > compression > accepts > negotiator:
+        patched: '2017-12-18T23:48:41.690Z'
+    - nachos-ui > react-native > metro > connect > serve-index > accepts > negotiator:
+        patched: '2017-12-18T23:48:41.690Z'
