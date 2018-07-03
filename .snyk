@@ -1,0 +1,14 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.12.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:lodash:20180130':
+    - react-native > plist > xmlbuilder > lodash:
+        patched: '2018-07-03T07:36:42.221Z'
+    - react-native > xcode > simple-plist > plist > xmlbuilder > lodash:
+        patched: '2018-07-03T07:36:42.221Z'
+    - nachos-ui > react-theme > lodash:
+        patched: '2018-07-03T07:36:42.221Z'
+    - nachos-ui > react-native > plist > xmlbuilder > lodash:
+        patched: '2018-07-03T07:36:42.221Z'
