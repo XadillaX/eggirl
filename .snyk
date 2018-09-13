@@ -1,0 +1,14 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.12.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:lodash:20180130':
+    - nachos-ui > react-native > metro > metro-visualizer > cytoscape-dagre > dagre > lodash:
+        patched: '2018-09-13T08:07:20.154Z'
+    - nachos-ui > react-native > metro > metro-visualizer > cytoscape-dagre > dagre > graphlib > lodash:
+        patched: '2018-09-13T08:07:20.154Z'
+    - nachos-ui > react-native > metro > metro-config > metro > metro-visualizer > cytoscape-dagre > dagre > lodash:
+        patched: '2018-09-13T08:07:20.154Z'
+    - nachos-ui > react-native > metro > metro-config > metro > metro-visualizer > cytoscape-dagre > dagre > graphlib > lodash:
+        patched: '2018-09-13T08:07:20.154Z'
