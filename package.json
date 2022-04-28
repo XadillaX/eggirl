@@ -7,7 +7,7 @@
 		"test": "jest"
 	},
 	"dependencies": {
-		"async": "^2.3.0",
+		"async": "^2.6.4",
 		"cheerio-without-node-native": "^0.20.2",
 		"crypto": "^0.0.3",
 		"eventemitter2": "^4.1.0",
